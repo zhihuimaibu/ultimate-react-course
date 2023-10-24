@@ -17,6 +17,7 @@ export default function Counter() {
         <input type="range" min="1" max="10" value={step} onChange={(e => setStep(+e.target.value))} />
         <span>{step}</span>
       </div>
+      <div></div>
       <div>
         <button className="btn" onClick={() => setCount(p => p - step)}>-</button>
         <input type="text" value={count} onChange={(e) => setCount(+e.target.value)}></input>
