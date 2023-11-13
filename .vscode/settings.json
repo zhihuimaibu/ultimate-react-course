@@ -5,5 +5,7 @@
   "editor.codeActionsOnSave": {},
   "prettier.trailingComma": "es5",
   "prettier.singleQuote": false,
-  "prettier.semi": true
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }
