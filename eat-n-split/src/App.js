@@ -30,7 +30,7 @@ function App() {
   const [selectedObj, setSelectedObj] = useState({
     billValue: "",
     yourExpense: "",
-    whoPaying: "",
+    whoPaying: "You",
   });
   function setBillValue(billValue) {
     setSelectedObj({
@@ -72,6 +72,11 @@ function App() {
     setFormShow(true);
   }
   function handleSelected(f) {
+    setSelectedObj({
+      billValue: "",
+      yourExpense: "",
+      whoPaying: "You",
+    });
     if (selected.id === f.id) {
       setSelected({});
       setSelectedShow(false);
@@ -82,7 +87,9 @@ function App() {
   }
   function handleSelectedForm(e) {
     e.preventDefault();
-    setFormShow(false);
+    setSelectedShow(false);
+    setSelected({});
+    console.log(selectedObj);
   }
   return (
     <div className='app'>
@@ -90,6 +97,7 @@ function App() {
         <Friends
           friends={friends}
           selected={selected}
+          selectedObj={selectedObj}
           onSelected={handleSelected}
         />
         {formShow && (
@@ -121,7 +129,7 @@ function App() {
   );
 }
 
-function Friends({ friends, selected, onSelected }) {
+function Friends({ friends, selected, selectedObj, onSelected }) {
   return (
     <ul>
       {friends.map((f) => {
@@ -130,6 +138,7 @@ function Friends({ friends, selected, onSelected }) {
             friend={f}
             key={f.id}
             selected={selected}
+            selectedObj={selectedObj}
             onSelected={onSelected}
           />
         );
@@ -146,7 +155,8 @@ function SelectedForm({
   setWhoPaying,
   onSelectedForm,
 }) {
-  const otherExpense = selectedObj.billValue - selectedObj.yourExpense;
+  selectedObj.otherExpense = selectedObj.billValue - selectedObj.yourExpense;
+  selectedObj.otherName = selected.name;
   return (
     <form className='form form-split-bill'>
       <label>😒Bill value</label>
@@ -160,14 +170,14 @@ function SelectedForm({
       <label>😒{selected.name}'s expense</label>
       <input
         disabled
-        value={otherExpense}></input>
+        value={selectedObj.otherExpense}></input>
       <label>😒Who is paying the bill</label>
       <select
         id='who'
         value={selectedObj.whoPaying}
-        onChange={(e) => setWhoPaying(Number(e.target.value))}>
-        <option>You</option>
-        <option>{selected.name}</option>
+        onChange={(e) => setWhoPaying(e.target.value)}>
+        <option label='You'>You</option>
+        <option label={selected.name}>{selected.name}</option>
       </select>
       <button
         className='button'
@@ -178,12 +188,18 @@ function SelectedForm({
   );
 }
 
-function Friend({ friend, selected, onSelected }) {
+// 不应该把selectedObj传过来， 怎么解决？更好的方法
+// 只想散出去把绑定的值，然后页面展示，也要把值通过父组件传？
+function Friend({ friend, selected, selectedObj, onSelected }) {
   return (
     <li>
       <img src={friend.image}></img>
       <h3>{friend.name}</h3>
-      <p>You own Clark {friend.balance}</p>
+      <p>
+        {selectedObj.whoPaying === "You"
+          ? `${selectedObj.otherName} own you ${selectedObj.otherExpense}`
+          : `you own ${selectedObj.otherName} ${selectedObj.yourExpense}`}
+      </p>
       <button
         className='button'
         onClick={() => onSelected(friend)}>
