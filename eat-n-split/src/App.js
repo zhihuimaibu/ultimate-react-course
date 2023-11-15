@@ -27,31 +27,8 @@ function App() {
   const [formShow, setFormShow] = useState(false);
   const [selectedShow, setSelectedShow] = useState(false);
   const [selected, setSelected] = useState({});
-  const [selectedObj, setSelectedObj] = useState({
-    billValue: "",
-    yourExpense: "",
-    whoPaying: "You",
-  });
-  function setBillValue(billValue) {
-    setSelectedObj({
-      ...selectedObj,
-      billValue,
-    });
-  }
-  function setYourExpense(yourExpense) {
-    setSelectedObj({
-      ...selectedObj,
-      yourExpense,
-    });
-  }
-  function setWhoPaying(whoPaying) {
-    setSelectedObj({
-      ...selectedObj,
-      whoPaying,
-    });
-  }
   function handleAddFriend() {
-    setFormShow(!formShow);
+    setFormShow(false);
   }
   function handleAdd(e) {
     e.preventDefault();
@@ -72,11 +49,6 @@ function App() {
     setFormShow(true);
   }
   function handleSelected(f) {
-    setSelectedObj({
-      billValue: "",
-      yourExpense: "",
-      whoPaying: "You",
-    });
     if (selected.id === f.id) {
       setSelected({});
       setSelectedShow(false);
@@ -85,11 +57,21 @@ function App() {
       setSelectedShow(true);
     }
   }
-  function handleSelectedForm(e) {
-    e.preventDefault();
+  function handleSelectedForm(obj) {
+    setFriends(
+      friends.map((f) => {
+        if (f.id === obj.id) {
+          return {
+            ...f,
+            balance: obj.balance,
+          };
+        } else {
+          return f;
+        }
+      })
+    );
     setSelectedShow(false);
     setSelected({});
-    console.log(selectedObj);
   }
   return (
     <div className='app'>
@@ -97,7 +79,6 @@ function App() {
         <Friends
           friends={friends}
           selected={selected}
-          selectedObj={selectedObj}
           onSelected={handleSelected}
         />
         {formShow && (
@@ -109,19 +90,18 @@ function App() {
             onAddFriend={handleAdd}
           />
         )}
-        <button
+        <Button onClick={handleAddFriend}>
+          {formShow ? "Close" : "Add friend"}
+        </Button>
+        {/* <button
           className='button'
           onClick={handleAddFriend}>
           {formShow ? "Close" : "Add friend"}
-        </button>
+        </button> */}
       </div>
       {selectedShow && (
         <SelectedForm
           selected={selected}
-          selectedObj={selectedObj}
-          setBillValue={setBillValue}
-          setYourExpense={setYourExpense}
-          setWhoPaying={setWhoPaying}
           onSelectedForm={handleSelectedForm}
         />
       )}
@@ -129,7 +109,7 @@ function App() {
   );
 }
 
-function Friends({ friends, selected, selectedObj, onSelected }) {
+function Friends({ friends, selected, onSelected }) {
   return (
     <ul>
       {friends.map((f) => {
@@ -138,7 +118,6 @@ function Friends({ friends, selected, selectedObj, onSelected }) {
             friend={f}
             key={f.id}
             selected={selected}
-            selectedObj={selectedObj}
             onSelected={onSelected}
           />
         );
@@ -147,65 +126,125 @@ function Friends({ friends, selected, selectedObj, onSelected }) {
   );
 }
 
-function SelectedForm({
-  selected,
-  selectedObj,
-  setBillValue,
-  setYourExpense,
-  setWhoPaying,
-  onSelectedForm,
-}) {
-  selectedObj.otherExpense = selectedObj.billValue - selectedObj.yourExpense;
-  selectedObj.otherName = selected.name;
+function SelectedForm({ selected, onSelectedForm }) {
+  const [bill, setBill] = useState({
+    billValue: 0,
+    yourExpense: 0,
+    whoPaying: "you",
+  });
+  function handleSplitBill() {
+    let balance = 0;
+    if (bill.whoPaying === "you") {
+      balance = bill.billValue - bill.yourExpense;
+    } else {
+      balance = bill.yourExpense - bill.billValue;
+    }
+    console.log(bill);
+    onSelectedForm({
+      id: selected.id,
+      balance,
+    });
+  }
   return (
     <form className='form form-split-bill'>
       <label>😒Bill value</label>
       <input
-        value={selectedObj.billValue}
-        onChange={(e) => setBillValue(Number(e.target.value))}></input>
+        type='text'
+        value={bill.billValue}
+        onChange={(e) => {
+          setBill({
+            ...bill,
+            billValue: Number(e.target.value),
+          });
+        }}></input>
+
       <label>😒Your expense</label>
       <input
-        value={selectedObj.yourExpense}
-        onChange={(e) => setYourExpense(Number(e.target.value))}></input>
+        type='text'
+        value={bill.yourExpense}
+        onChange={(e) => {
+          setBill({
+            ...bill,
+            yourExpense: Number(e.target.value),
+          });
+        }}></input>
+
       <label>😒{selected.name}'s expense</label>
       <input
+        type='text'
         disabled
-        value={selectedObj.otherExpense}></input>
+        value={bill.billValue - bill.yourExpense}></input>
+
       <label>😒Who is paying the bill</label>
       <select
         id='who'
-        value={selectedObj.whoPaying}
-        onChange={(e) => setWhoPaying(e.target.value)}>
+        value={bill.whoPaying}
+        onChange={(e) =>
+          setBill({
+            ...bill,
+            whoPaying: e.target.value,
+          })
+        }>
         <option label='You'>You</option>
         <option label={selected.name}>{selected.name}</option>
       </select>
-      <button
+      <Button onClick={handleSplitBill}>Split bill</Button>
+      {/* <button
         className='button'
-        onClick={onSelectedForm}>
+        onClick={handleSplitBill}>
         Split bill
-      </button>
+      </button> */}
     </form>
   );
 }
 
-// 不应该把selectedObj传过来， 怎么解决？更好的方法
+// 不应该把selectedObj传过来， 怎么解决？
+//更好的方法：每个friend独立，添加balance属性
 // 只想散出去把绑定的值，然后页面展示，也要把值通过父组件传？
-function Friend({ friend, selected, selectedObj, onSelected }) {
+function Friend({ friend, selected, onSelected }) {
   return (
     <li>
-      <img src={friend.image}></img>
+      <img
+        src={friend.image}
+        alt={friend.name}></img>
       <h3>{friend.name}</h3>
-      <p>
-        {selectedObj.whoPaying === "You"
-          ? `${selectedObj.otherName} own you ${selectedObj.otherExpense}`
-          : `you own ${selectedObj.otherName} ${selectedObj.yourExpense}`}
-      </p>
-      <button
+
+      {friend.balance === 0 && <p>you and {friend.name} are even</p>}
+
+      {friend.balance > 0 && (
+        <p style={{ color: "green" }}>
+          {friend.name} own you {friend.balance}
+        </p>
+      )}
+
+      {friend.balance < 0 && (
+        <p style={{ color: "red" }}>
+          you own {friend.name} {-friend.balance}
+        </p>
+      )}
+      <Button onClick={() => onSelected(friend)}>
+        {selected.id === friend.id ? "Close" : "Selected"}
+      </Button>
+      {/* <button
         className='button'
         onClick={() => onSelected(friend)}>
         {selected.id === friend.id ? "Close" : "Selected"}
-      </button>
+      </button> */}
     </li>
+  );
+}
+
+function Button({ children, onClick }) {
+  function handleClick(e) {
+    e.preventDefault();
+    onClick();
+  }
+  return (
+    <button
+      className='button'
+      onClick={handleClick}>
+      {children}
+    </button>
   );
 }
 
@@ -220,10 +259,13 @@ function AddForm({
     <form className='form-add-friend'>
       <label>🧑‍🤝‍🧑Friend name</label>
       <input
+        type='text'
         value={friendName}
         onChange={(e) => onFriendName(e.target.value)}></input>
+
       <label>❤️Image URl</label>
       <input
+        type='text'
         value={imageURI}
         onChange={(e) => {
           onImageURI(e.target.value);
