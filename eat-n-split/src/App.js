@@ -28,7 +28,7 @@ function App() {
   const [selectedShow, setSelectedShow] = useState(false);
   const [selected, setSelected] = useState({});
   function handleAddFriend() {
-    setFormShow(false);
+    setFormShow(!formShow);
   }
   function handleAdd(e) {
     e.preventDefault();
