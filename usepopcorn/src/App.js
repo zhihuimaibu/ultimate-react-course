@@ -1,8 +1,11 @@
 import { useState } from "react";
 import Nav from "./components/Nav";
-import Button from "./components/Button";
-import Movie from "./components/Movie";
+import Main from "./components/Main";
+import Result from "./components/Result";
+import Search from "./components/Search";
+import MovieList from "./components/MovieList";
 import WatchedMovie from "./components/WatchedMovie";
+import Button from "./components/Button";
 import Summary from "./components/Summary";
 
 const tempMovieData = [
@@ -52,61 +55,50 @@ const tempWatchedData = [
   },
 ];
 
-const average = (arr) =>
-  arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
+function Box({ children }) {
+  const [isOpen, setIsOpen] = useState(true);
+
+  return (
+    <div className='box'>
+      <Button onClick={() => setIsOpen((open) => !open)}>
+        {isOpen ? "–" : "+"}
+      </Button>
+      {isOpen && <>{children}</>}
+    </div>
+  );
+}
+
+function WatchedMovieList({ watched }) {
+  return (
+    <ul className='list'>
+      {watched.map((movie) => (
+        <WatchedMovie
+          movie={movie}
+          key={movie.imdbID}></WatchedMovie>
+      ))}
+    </ul>
+  );
+}
 
 export default function App() {
   const [movies, setMovies] = useState(tempMovieData);
   const [watched, setWatched] = useState(tempWatchedData);
-  const [isOpen1, setIsOpen1] = useState(true);
-  const [isOpen2, setIsOpen2] = useState(true);
-
-  const avgImdbRating = average(watched.map((movie) => movie.imdbRating));
-  const avgUserRating = average(watched.map((movie) => movie.userRating));
-  const avgRuntime = average(watched.map((movie) => movie.runtime));
 
   return (
     <>
-      <Nav movies={movies} />
-
-      <main className='main'>
-        <div className='box'>
-          <Button onClick={() => setIsOpen1((open) => !open)}>
-            {isOpen1 ? "–" : "+"}
-          </Button>
-          {isOpen1 && (
-            <ul className='list'>
-              {movies?.map((movie) => (
-                <Movie
-                  movie={movie}
-                  key={movie.imdbID}></Movie>
-              ))}
-            </ul>
-          )}
-        </div>
-
-        <div className='box'>
-          <Button onClick={() => setIsOpen2((open) => !open)}>
-            {isOpen2 ? "–" : "+"}
-          </Button>
-          {isOpen2 && (
-            <>
-              <Summary
-                watched={watched}
-                avgImdbRating={avgImdbRating}
-                avgUserRating={avgUserRating}
-                avgRuntime={avgRuntime}></Summary>
-              <ul className='list'>
-                {watched.map((movie) => (
-                  <WatchedMovie
-                    movie={movie}
-                    key={movie.imdbID}></WatchedMovie>
-                ))}
-              </ul>
-            </>
-          )}
-        </div>
-      </main>
+      <Nav>
+        <Search></Search>
+        <Result movies={movies}></Result>
+      </Nav>
+      <Main>
+        <Box>
+          <MovieList movies={movies}></MovieList>
+        </Box>
+        <Box>
+          <Summary watched={watched}></Summary>
+          <WatchedMovieList watched={watched}></WatchedMovieList>
+        </Box>
+      </Main>
     </>
   );
 }
