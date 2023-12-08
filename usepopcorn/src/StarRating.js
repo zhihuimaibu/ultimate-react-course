@@ -2,8 +2,8 @@ import { useState } from "react";
 
 function Star({
   full,
-  size,
   color,
+  size,
   onClickStar,
   onMouseOutStar,
   onMouseOverStar,
@@ -18,8 +18,8 @@ function Star({
     <span
       style={starStyle}
       onClick={onClickStar}
-      onMouseOut={onMouseOutStar}
-      onMouseOver={onMouseOverStar}>
+      onMouseLeave={onMouseOutStar}
+      onMouseEnter={onMouseOverStar}>
       {full ? (
         <svg
           xmlns='http://www.w3.org/2000/svg'
@@ -46,39 +46,50 @@ function Star({
   );
 }
 
-export default function StarRating({ length }) {
-  const [index, setIndex] = useState();
-  const [tempIndex, setTempIndex] = useState();
+export default function StarRating({
+  length = 5,
+  color = "#fcc419",
+  size = 24,
+  className = "",
+  defaultIndex = -1,
+  message = [],
+  setFullStarNum = () => {},
+}) {
+  const [index, setIndex] = useState(defaultIndex);
+  const [tempIndex, setTempIndex] = useState(defaultIndex);
 
   return (
-    <div className='rating'>
+    <div className={`${className} rating`}>
       <div style={{ display: "flex" }}>
         {Array.from({ length: length }, (v, i) => {
           return (
             <Star
-              i={i}
               key={i}
-              size={24}
-              color={"#fcc419"}
-              onClickStar={() => setIndex(i)}
-              onMouseOverStar={() => setTempIndex(i)}
+              color={color}
+              size={size}
+              onClickStar={() => {
+                setIndex(i);
+                setTempIndex(i);
+              }}
+              onMouseOverStar={() => {
+                setTempIndex(i);
+                setFullStarNum(i + 1);
+              }}
               onMouseOutStar={() => setTempIndex(index)}
               full={tempIndex >= i}
             />
           );
         })}
-        {tempIndex && (
-          <span
-            style={{
-              color: "#fcc419",
-              fontSize: "16px",
-              display: "block",
-              marginLeft: "16px",
-              lineHeight: "24px",
-            }}>
-            {tempIndex + 1}
-          </span>
-        )}
+        <span
+          style={{
+            color: color,
+            fontSize: size / 1.3,
+            display: "block",
+            marginLeft: "16px",
+            lineHeight: "1",
+          }}>
+          {tempIndex + 1 === 0 ? "" : tempIndex + 1}
+        </span>
       </div>
     </div>
   );
