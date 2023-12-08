@@ -88,7 +88,11 @@ export default function StarRating({
             marginLeft: "16px",
             lineHeight: "1",
           }}>
-          {tempIndex + 1 === 0 ? "" : tempIndex + 1}
+          {tempIndex + 1 === 0
+            ? ""
+            : message.length === length
+            ? message[tempIndex]
+            : tempIndex + 1}
         </span>
       </div>
     </div>
