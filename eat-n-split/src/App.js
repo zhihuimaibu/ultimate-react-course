@@ -65,6 +65,7 @@ function App() {
       </div>
       {selected && (
         <SelectedForm
+          key={selected.id}
           selected={selected}
           onSelectedForm={handleSelectedForm}
         />

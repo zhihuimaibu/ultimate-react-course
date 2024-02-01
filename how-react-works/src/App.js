@@ -25,8 +25,10 @@ export default function App() {
     </div>
   );
 }
-console.log(<DifferentContent ttt='dd' />);
-console.log(DifferentContent());
+// instance
+// console.log(<DifferentContent ttt='dd' />);
+// component
+// console.log(DifferentContent());
 
 function Tabbed({ content }) {
   const [activeTab, setActiveTab] = useState(0);
@@ -56,7 +58,7 @@ function Tabbed({ content }) {
         />
       </div>
       {activeTab <= 2 ? (
-        <TabContent item={content.at(activeTab)} />
+        <TabContent item={content.at(activeTab)} key={content.at(activeTab).summary}/>
       ) : (
         <DifferentContent />
       )}
@@ -82,6 +84,29 @@ function TabContent({ item }) {
     setLikes(likes + 1);
   }
 
+  function handleTripleInc() {
+    //放在第一行和最后一行 结果不一致哦！！
+    // setLikes(likes + 1)
+    setLikes((likes) => likes + 1)
+    setLikes((likes) => likes + 1)
+    setLikes((likes) => likes + 1)
+  }
+
+  console.log('render')
+
+  function handleUndo() {
+    //批量更新
+    setShowDetails(true);
+    setLikes(0);
+    //批量异步更新
+    console.log(likes)
+  }
+
+  // setTimeout Promise .addEventListener 自动批量更新
+  function handleUndoLater() {
+    setTimeout(handleUndo, 2000)
+  }
+
   return (
     <div className='tab-content'>
       <h4>{item.summary}</h4>
@@ -95,13 +120,13 @@ function TabContent({ item }) {
         <div className='hearts-counter'>
           <span>{likes} ❤️</span>
           <button onClick={handleInc}>+</button>
-          <button>+++</button>
+          <button onClick={handleTripleInc}>+++</button>
         </div>
       </div>
 
       <div className='tab-undo'>
-        <button>Undo</button>
-        <button>Undo in 2s</button>
+        <button onClick={handleUndo}>Undo</button>
+        <button onClick={handleUndoLater}>Undo in 2s</button>
       </div>
     </div>
   );
