@@ -104,16 +104,20 @@ function MovieDetail({ selectedId, onBack, onAddWatched, watched }) {
   const isWatched = watched.find((movie) => movie.imdbID === selectedId);
 
   useEffect(() => {
+    const controller = new AbortController();
+
     async function fetchMovieDetail(selectedId) {
       setIsLoading(true);
       const res = await fetch(
-        `https://www.omdbapi.com/?apikey=${key}&i=${selectedId}`
+        `https://www.omdbapi.com/?apikey=${key}&i=${selectedId}`,
+        {
+          signal: controller.signal,
+        }
       );
       const movie = await res.json();
       setMovie(movie);
       setIsLoading(false);
     }
-
     fetchMovieDetail(selectedId);
   }, [selectedId]);
 
@@ -129,6 +133,28 @@ function MovieDetail({ selectedId, onBack, onAddWatched, watched }) {
     Director: director,
     imdbID,
   } = movie;
+
+  useEffect(() => {
+    if (!title) return;
+    document.querySelector("title").innerHTML = `movie | ${title}`;
+
+    return () => {
+      document.querySelector("title").innerHTML = "usePopCorn";
+    };
+  }, [title]);
+
+  useEffect(() => {
+    function back(e) {
+      if (e.code === "Escape") {
+        onBack();
+        console.log("back");
+      }
+    }
+    document.addEventListener("keydown", back);
+    return function () {
+      document.removeEventListener("keydown", back);
+    };
+  }, [onBack]);
 
   function handleAddWatched() {
     const watchedMovie = {
@@ -199,18 +225,24 @@ function MovieDetail({ selectedId, onBack, onAddWatched, watched }) {
 export default function App() {
   const [movies, setMovies] = useState([]);
   const [watched, setWatched] = useState([]);
-  const [query, setQuery] = useState("friends");
+  const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [selectedId, setSelectedId] = useState("");
 
   useEffect(() => {
+    const controller = new AbortController();
+
     async function fetchMovie() {
       setLoading(true);
       setMessage("");
+
       try {
         const res = await fetch(
-          `https://www.omdbapi.com/?apikey=${key}&s=${query}`
+          `https://www.omdbapi.com/?apikey=${key}&s=${query}`,
+          {
+            signal: controller.signal,
+          }
         );
         if (!res.ok) throw new Error("something went wrong with");
 
@@ -219,7 +251,9 @@ export default function App() {
 
         setMovies(data.Search);
       } catch (err) {
-        setMessage(err.message);
+        if (err.name !== "AbortError") {
+          setMessage(err.message);
+        }
       } finally {
         setLoading(false);
       }
@@ -228,9 +262,14 @@ export default function App() {
       setMovies([]);
       setLoading(false);
       return;
-    } else {
-      fetchMovie();
     }
+
+    fetchMovie();
+    handleBack();
+
+    return () => {
+      controller.abort();
+    };
   }, [query]);
 
   function handleBack() {

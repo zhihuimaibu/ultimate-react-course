@@ -7,6 +7,7 @@ import Resume from "./resume/resume";
 import Accordion from "./accordion/Accordion";
 import Bill from "./bill/Bill";
 import TextExpander from "./textExpander";
+import CurrencyConverter from "./currencyConverter";
 
 function App() {
   return (
@@ -17,7 +18,7 @@ function App() {
         {/* <Counter /> */}
         {/* <Accordion /> */}
         {/* <Resume /> */}
-        <div>
+        {/* <div>
           <TextExpander>
             Space travel is the ultimate adventure! Imagine soaring past the
             stars and exploring new worlds. It's the stuff of dreams and science
@@ -28,9 +29,10 @@ function App() {
 
           <TextExpander
             collapsedNumWords={20}
-            expandButtonText='Show text'
-            collapseButtonText='Collapse text'
-            buttonColor='#ff6622'>
+            expandButtonText="Show text"
+            collapseButtonText="Collapse text"
+            buttonColor="#ff6622"
+          >
             Space travel requires some seriously amazing technology and
             collaboration between countries, private companies, and
             international space organizations. And while it's not always easy
@@ -39,15 +41,14 @@ function App() {
             roam around on Mars.
           </TextExpander>
 
-          <TextExpander
-            expanded={true}
-            className='box'>
+          <TextExpander expanded={true} className="box">
             Space missions have given us incredible insights into our universe
             and have inspired future generations to keep reaching for the stars.
             Space travel is a pretty cool thing to think about. Who knows what
             we'll discover next!
           </TextExpander>
-        </div>
+        </div> */}
+        <CurrencyConverter />
       </div>
     </>
   );
