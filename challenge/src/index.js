@@ -8,11 +8,13 @@ import Accordion from "./accordion/Accordion";
 import Bill from "./bill/Bill";
 import TextExpander from "./textExpander";
 import CurrencyConverter from "./currencyConverter";
+import UseLocation from "./useLocation";
 
 function App() {
   return (
     <>
       <div>
+        <UseLocation />
         {/* <Bill /> */}
         {/* <FlashCards /> */}
         {/* <Counter /> */}
@@ -48,7 +50,7 @@ function App() {
             we'll discover next!
           </TextExpander>
         </div> */}
-        <CurrencyConverter />
+        {/* <CurrencyConverter /> */}
       </div>
     </>
   );
