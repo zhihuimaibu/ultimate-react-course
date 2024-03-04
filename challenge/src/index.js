@@ -8,13 +8,14 @@ import Accordion from "./accordion/Accordion";
 import Bill from "./bill/Bill";
 import TextExpander from "./textExpander";
 import CurrencyConverter from "./currencyConverter";
-import UseLocation from "./useLocation";
+import UseLocation from "./location";
+import BankAccount from "./bankAccount";
 
 function App() {
   return (
     <>
       <div>
-        <UseLocation />
+        <BankAccount />
         {/* <Bill /> */}
         {/* <FlashCards /> */}
         {/* <Counter /> */}

@@ -6,6 +6,11 @@
   box-sizing: border-box;
 }
 
+.App {
+  font-family: sans-serif;
+  text-align: center;
+}
+
 body {
   font-family: "IBM Plex Mono", sans-serif;
   background-color: #f7f7f7;
