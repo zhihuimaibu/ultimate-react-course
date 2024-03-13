@@ -1,10 +1,7 @@
-function StartSecreen({
-  dispatch,
-  numQuestion,
-  points,
-  maxPossiableQuestion,
-  highscore,
-}) {
+import { useQuiz } from "../context/QuizProvider";
+
+function StartSecreen() {
+  const { dispatch, points, maxPossiableQuestion, highscore } = useQuiz();
   const percentage = (points / maxPossiableQuestion) * 100;
   return (
     <div>

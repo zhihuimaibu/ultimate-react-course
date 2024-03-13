@@ -1,15 +1,13 @@
-function Progress({
-  index,
-  numQuestions,
-  points,
-  maxPossiableQuestion,
-  answer,
-}) {
+import { useQuiz } from "../context/QuizProvider";
+
+function Progress() {
+  const { index, numQuestion, points, maxPossiableQuestion, answer } =
+    useQuiz();
   return (
     <div className="progress">
-      <progress max={numQuestions} value={index + (answer !== null)}></progress>
+      <progress max={numQuestion} value={index + (answer !== null)}></progress>
       <p>
-        Question <strong>{index + 1}</strong> / {numQuestions}
+        Question <strong>{index + 1}</strong> / {numQuestion}
       </p>
       <p>
         <strong>{points}</strong> / {maxPossiableQuestion} points

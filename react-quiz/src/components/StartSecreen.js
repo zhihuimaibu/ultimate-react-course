@@ -1,4 +1,7 @@
-function StartSecreen({ dispatch, numQuestion }) {
+import { useQuiz } from "../context/QuizProvider";
+
+function StartSecreen() {
+  const { dispatch, numQuestion } = useQuiz();
   return (
     <div>
       <h2>Welcom to The React Quiz!</h2>

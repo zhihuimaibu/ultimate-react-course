@@ -1,11 +1,13 @@
 import CityItem from "./CityItem";
 import Spinner from "./Spinner";
 import styles from "./CityList.module.css";
+import { useCities } from "../context/CitiesProvider";
 
-// Referencing an external object disable the rule for the component
-function CityList({ cities, isLoading }) {
+function CityList() {
+  const { cities, isLoading } = useCities();
+
   if (isLoading) return <Spinner />;
-
+  9;
   return (
     <ul className={styles.cityList}>
       {cities.map((city) => {
