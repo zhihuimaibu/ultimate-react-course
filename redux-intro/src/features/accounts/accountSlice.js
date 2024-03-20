@@ -53,6 +53,7 @@ export function deposit(amount, currency) {
       type: "account/deposit",
       payload: amount,
     };
+  //thunk 返回的是个函数
   return async function (dispatch, getState) {
     dispatch({
       type: "account/convertCorrency",
